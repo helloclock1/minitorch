@@ -22,6 +22,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install flake8 pytest pep8-naming
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+        pip install numba==0.58.1 numpy==1.26.4
     - name: Lint with flake8
       run: |
         # stop the build if there are Python syntax errors or undefined names
