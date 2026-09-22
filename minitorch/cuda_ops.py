@@ -33,7 +33,7 @@ class CudaOps(TensorOps):
 
     @staticmethod
     def map(fn: Callable[[float], float]) -> MapProto:
-        "See `tensor_ops.py`"
+        """See `tensor_ops.py`"""
         f = tensor_map(cuda.jit(device=True)(fn))
 
         def ret(a: Tensor, out: Optional[Tensor] = None) -> Tensor:
@@ -125,19 +125,21 @@ class CudaOps(TensorOps):
 
 
 def tensor_map(
-    fn: Callable[[float], float]
+    fn: Callable[[float], float],
 ) -> Callable[[Storage, Shape, Strides, Storage, Shape, Strides], None]:
-    """
-    CUDA higher-order tensor map function. ::
+    """CUDA higher-order tensor map function. ::
 
       fn_map = tensor_map(fn)
       fn_map(out, ... )
 
     Args:
+    ----
         fn: function mappings floats-to-floats to apply.
 
     Returns:
+    -------
         Tensor map function.
+
     """
 
     def _map(
@@ -149,32 +151,33 @@ def tensor_map(
         in_shape: Shape,
         in_strides: Strides,
     ) -> None:
-
         out_index = cuda.local.array(MAX_DIMS, numba.int32)
         in_index = cuda.local.array(MAX_DIMS, numba.int32)
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
         # TODO: Implement for Task 3.3.
-        raise NotImplementedError('Need to implement for Task 3.3')
+        raise NotImplementedError("Need to implement for Task 3.3")
 
     return cuda.jit()(_map)  # type: ignore
 
 
 def tensor_zip(
-    fn: Callable[[float, float], float]
+    fn: Callable[[float, float], float],
 ) -> Callable[
     [Storage, Shape, Strides, Storage, Shape, Strides, Storage, Shape, Strides], None
 ]:
-    """
-    CUDA higher-order tensor zipWith (or map2) function ::
+    """CUDA higher-order tensor zipWith (or map2) function ::
 
       fn_zip = tensor_zip(fn)
       fn_zip(out, ...)
 
     Args:
+    ----
         fn: function mappings two floats to float to apply.
 
     Returns:
+    -------
         Tensor zip function.
+
     """
 
     def _zip(
@@ -189,21 +192,19 @@ def tensor_zip(
         b_shape: Shape,
         b_strides: Strides,
     ) -> None:
-
         out_index = cuda.local.array(MAX_DIMS, numba.int32)
         a_index = cuda.local.array(MAX_DIMS, numba.int32)
         b_index = cuda.local.array(MAX_DIMS, numba.int32)
         i = cuda.blockIdx.x * cuda.blockDim.x + cuda.threadIdx.x
 
         # TODO: Implement for Task 3.3.
-        raise NotImplementedError('Need to implement for Task 3.3')
+        raise NotImplementedError("Need to implement for Task 3.3")
 
     return cuda.jit()(_zip)  # type: ignore
 
 
 def _sum_practice(out: Storage, a: Storage, size: int) -> None:
-    """
-    This is a practice sum kernel to prepare for reduce.
+    """This is a practice sum kernel to prepare for reduce.
 
     Given an array of length $n$ and out of size $n // \text{blockDIM}$
     it should sum up each blockDim values into an out cell.
@@ -217,6 +218,7 @@ def _sum_practice(out: Storage, a: Storage, size: int) -> None:
     Note: Each block must do the sum using shared memory!
 
     Args:
+    ----
         out (Storage): storage for `out` tensor.
         a (Storage): storage for `a` tensor.
         size (int):  length of a.
@@ -229,7 +231,7 @@ def _sum_practice(out: Storage, a: Storage, size: int) -> None:
     pos = cuda.threadIdx.x
 
     # TODO: Implement for Task 3.3.
-    raise NotImplementedError('Need to implement for Task 3.3')
+    raise NotImplementedError("Need to implement for Task 3.3")
 
 
 jit_sum_practice = cuda.jit()(_sum_practice)
@@ -248,15 +250,16 @@ def sum_practice(a: Tensor) -> TensorData:
 
 
 def tensor_reduce(
-    fn: Callable[[float, float], float]
+    fn: Callable[[float, float], float],
 ) -> Callable[[Storage, Shape, Strides, Storage, Shape, Strides, int], None]:
-    """
-    CUDA higher-order tensor reduce function.
+    """CUDA higher-order tensor reduce function.
 
     Args:
+    ----
         fn: reduction function maps two floats to float.
 
     Returns:
+    -------
         Tensor reduce function.
 
     """
@@ -279,14 +282,13 @@ def tensor_reduce(
         pos = cuda.threadIdx.x
 
         # TODO: Implement for Task 3.3.
-        raise NotImplementedError('Need to implement for Task 3.3')
+        raise NotImplementedError("Need to implement for Task 3.3")
 
     return cuda.jit()(_reduce)  # type: ignore
 
 
 def _mm_practice(out: Storage, a: Storage, b: Storage, size: int) -> None:
-    """
-    This is a practice square MM kernel to prepare for matmul.
+    """This is a practice square MM kernel to prepare for matmul.
 
     Given a storage `out` and two storage `a` and `b`. Where we know
     both are shape [size, size] with strides [size, 1].
@@ -309,14 +311,16 @@ def _mm_practice(out: Storage, a: Storage, b: Storage, size: int) -> None:
     ```
 
     Args:
+    ----
         out (Storage): storage for `out` tensor.
         a (Storage): storage for `a` tensor.
         b (Storage): storage for `b` tensor.
         size (int): size of the square
+
     """
     BLOCK_DIM = 32
     # TODO: Implement for Task 3.3.
-    raise NotImplementedError('Need to implement for Task 3.3')
+    raise NotImplementedError("Need to implement for Task 3.3")
 
 
 jit_mm_practice = cuda.jit()(_mm_practice)
@@ -346,8 +350,7 @@ def _tensor_matrix_multiply(
     b_shape: Shape,
     b_strides: Strides,
 ) -> None:
-    """
-    CUDA tensor matrix multiply function.
+    """CUDA tensor matrix multiply function.
 
     Requirements:
 
@@ -386,7 +389,7 @@ def _tensor_matrix_multiply(
     #    b) Copy into shared memory for b matrix
     #    c) Compute the dot produce for position c[i, j]
     # TODO: Implement for Task 3.4.
-    raise NotImplementedError('Need to implement for Task 3.4')
+    raise NotImplementedError("Need to implement for Task 3.4")
 
 
 tensor_matrix_multiply = cuda.jit(_tensor_matrix_multiply)

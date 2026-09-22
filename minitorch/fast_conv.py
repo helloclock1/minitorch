@@ -1,13 +1,10 @@
 from typing import Tuple
 
-import numpy as np
-from numba import njit, prange
+from numba import njit
 
 from .autodiff import Context
 from .tensor import Tensor
 from .tensor_data import (
-    MAX_DIMS,
-    Index,
     Shape,
     Strides,
     broadcast_index,
@@ -37,8 +34,7 @@ def _tensor_conv1d(
     weight_strides: Strides,
     reverse: bool,
 ) -> None:
-    """
-    1D Convolution implementation.
+    """1D Convolution implementation.
 
     Given input tensor of
 
@@ -56,6 +52,7 @@ def _tensor_conv1d(
     (See diagrams)
 
     Args:
+    ----
         out (Storage): storage for `out` tensor.
         out_shape (Shape): shape for `out` tensor.
         out_strides (Strides): strides for `out` tensor.
@@ -67,6 +64,7 @@ def _tensor_conv1d(
         weight_shape (Shape): shape for `input` tensor.
         weight_strides (Strides): strides for `input` tensor.
         reverse (bool): anchor weight at left or right
+
     """
     batch_, out_channels, out_width = out_shape
     batch, in_channels, width = input_shape
@@ -81,7 +79,7 @@ def _tensor_conv1d(
     s2 = weight_strides
 
     # TODO: Implement for Task 4.1.
-    raise NotImplementedError('Need to implement for Task 4.1')
+    raise NotImplementedError("Need to implement for Task 4.1")
 
 
 tensor_conv1d = njit(parallel=True)(_tensor_conv1d)
@@ -90,16 +88,18 @@ tensor_conv1d = njit(parallel=True)(_tensor_conv1d)
 class Conv1dFun(Function):
     @staticmethod
     def forward(ctx: Context, input: Tensor, weight: Tensor) -> Tensor:
-        """
-        Compute a 1D Convolution
+        """Compute a 1D Convolution
 
         Args:
+        ----
             ctx : Context
             input : batch x in_channel x h x w
             weight : out_channel x in_channel x kh x kw
 
         Returns:
+        -------
             batch x out_channel x h x w
+
         """
         ctx.save_for_backward(input, weight)
         batch, in_channels, w = input.shape
@@ -158,8 +158,7 @@ def _tensor_conv2d(
     weight_strides: Strides,
     reverse: bool,
 ) -> None:
-    """
-    2D Convolution implementation.
+    """2D Convolution implementation.
 
     Given input tensor of
 
@@ -178,6 +177,7 @@ def _tensor_conv2d(
 
 
     Args:
+    ----
         out (Storage): storage for `out` tensor.
         out_shape (Shape): shape for `out` tensor.
         out_strides (Strides): strides for `out` tensor.
@@ -189,6 +189,7 @@ def _tensor_conv2d(
         weight_shape (Shape): shape for `input` tensor.
         weight_strides (Strides): strides for `input` tensor.
         reverse (bool): anchor weight at top-left or bottom-right
+
     """
     batch_, out_channels, _, _ = out_shape
     batch, in_channels, height, width = input_shape
@@ -207,7 +208,7 @@ def _tensor_conv2d(
     s20, s21, s22, s23 = s2[0], s2[1], s2[2], s2[3]
 
     # TODO: Implement for Task 4.2.
-    raise NotImplementedError('Need to implement for Task 4.2')
+    raise NotImplementedError("Need to implement for Task 4.2")
 
 
 tensor_conv2d = njit(parallel=True, fastmath=True)(_tensor_conv2d)
@@ -216,16 +217,18 @@ tensor_conv2d = njit(parallel=True, fastmath=True)(_tensor_conv2d)
 class Conv2dFun(Function):
     @staticmethod
     def forward(ctx: Context, input: Tensor, weight: Tensor) -> Tensor:
-        """
-        Compute a 2D Convolution
+        """Compute a 2D Convolution
 
         Args:
+        ----
             ctx : Context
             input : batch x in_channel x h x w
             weight  : out_channel x in_channel x kh x kw
 
         Returns:
+        -------
             (:class:`Tensor`) : batch x out_channel x h x w
+
         """
         ctx.save_for_backward(input, weight)
         batch, in_channels, h, w = input.shape
